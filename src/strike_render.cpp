@@ -8,6 +8,19 @@
 
 /* ----------------- helpers ----------------- */
 
+static void draw_grid(float size, float step) {
+    glColor3f(0.15f, 0.15f, 0.18f);
+    glBegin(GL_LINES);
+    for (float i = -size; i <= size; i += step) {
+        glVertex3f(i, -size, 0.0f);
+        glVertex3f(i,  size, 0.0f);
+
+        glVertex3f(-size, i, 0.0f);
+        glVertex3f( size, i, 0.0f);
+    }
+    glEnd();
+}
+
 static void draw_cube(float x, float y, float z, float s) {
     float h = s * 0.5f;
     glPushMatrix();
@@ -108,7 +121,6 @@ int main(int argc, char **argv) {
         const StrikeFrame &f = timeline[frame];
         const float z = 0.0f;
 
-        /* ---- focal point (computed FIRST) ---- */
         const float cx = (f.f16.x + f.missile.x) * 0.5f;
         const float cy = (f.f16.y + f.missile.y) * 0.5f;
 
@@ -119,7 +131,6 @@ int main(int argc, char **argv) {
         glLoadIdentity();
         gluPerspective(60.0, (double)w / h, 1.0, 5000.0);
 
-        /* ---- 3D tilted orbit camera ---- */
         const float cam_dist   = 900.0f;
         const float cam_height = 450.0f;
         const float cam_yaw    = 0.6f;
@@ -135,6 +146,9 @@ int main(int argc, char **argv) {
             cx, cy, z,
             0.0f, 0.0f, 1.0f
         );
+
+        /* ---- GRID (world reference) ---- */
+        draw_grid(2000.0f, 100.0f);
 
         /* ---- trails ---- */
         glColor3f(0.4f, 0.6f, 1.0f);
