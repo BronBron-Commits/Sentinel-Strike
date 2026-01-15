@@ -1,6 +1,8 @@
 add_executable(sentinel-strike
     main.cpp
     sam_radar.cpp
+    missile_launch.cpp
+    missile_kinematics.cpp
 )
 
 target_include_directories(sentinel-strike PRIVATE
