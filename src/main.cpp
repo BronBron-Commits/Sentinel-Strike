@@ -18,6 +18,7 @@
 #include "missile_initial_state.hpp"
 #include "missile_launch.hpp"
 #include "missile_kinematics.hpp"
+#include "missile_guidance.hpp"
 
 int main() {
     SimState core = sim_initial_state();
@@ -67,13 +68,14 @@ int main() {
 }
 
         // ---- Missile kinematics update
-        missile_update_kinematics(missile);
-
         if (missile.active) {
-            printf("[missile] pos=(%.1f, %.1f) tick=%llu\n",
-                   missile.x,
-                   missile.y,
-                   (unsigned long long)missile.tick);
+            missile_update_guidance(missile, f16, 0.08, core.tick);
+            missile_update_kinematics(missile, f16, 1.0f);
+
+            printf("[missile] pos=(%.1f, %.1f) vel=(%.1f, %.1f) tick=%llu\n",
+                   missile.x, missile.y,
+                   missile.vx, missile.vy,
+                   (unsigned long long)core.tick);
         }
 
 

@@ -2,24 +2,16 @@
 #include <cstdint>
 
 struct MissileState {
-    // position
-    double x = 0.0;
-    double y = 0.0;
+    float x = 0.0f;
+    float y = 0.0f;
+    float vx = 0.0f;
+    float vy = 0.0f;
+    float speed = 20.0f;
 
-    // velocity
-    double vx = 0.0;
-    double vy = 0.0;
+    bool active = false;     // flying
+    bool detonated = false; // fuse triggered
+    bool hit = false;       // hit confirmed
 
-    // lifecycle
-    bool active = false;
-    bool detonated = false;
-
-    // ownership
-    enum class Owner : uint8_t {
-        SAM,
-        F16
-    } owner = Owner::SAM;
-
-    uint64_t launch_tick = 0;
-    uint64_t tick = 0;
+    uint64_t launch_tick = 0; // tick missile was launched
+    uint64_t tick = 0;        // current sim tick
 };
