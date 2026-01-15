@@ -4,7 +4,9 @@ add_executable(sentinel-strike
 
 target_include_directories(sentinel-strike PRIVATE
     ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/external/sentinel-sim-core/include
 )
 
-find_package(SDL2 REQUIRED)
-target_link_libraries(sentinel-strike PRIVATE SDL2::SDL2 SDL2::SDL2main GL GLU glut)
+target_link_libraries(sentinel-strike PRIVATE
+    simcore
+)
