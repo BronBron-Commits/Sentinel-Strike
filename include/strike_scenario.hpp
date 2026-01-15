@@ -1,21 +1,24 @@
 #pragma once
 
 #include <cstdint>
-#include "strike_frame.hpp"
+
+#include <simcore/sim_state.hpp>
 
 #include "f16_state.hpp"
 #include "sam_state.hpp"
 #include "missile_state.hpp"
+#include "strike_frame.hpp"
 
 struct StrikeScenario {
-    uint64_t tick = 0;
+    // deterministic core
+    SimState core;
 
+    // domain state
     F16State     f16;
     SamState     sam;
     MissileState missile;
 
     void init();
     void step();
-
     StrikeFrame snapshot() const;
 };

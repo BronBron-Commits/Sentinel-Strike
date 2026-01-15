@@ -1,9 +1,11 @@
-#include <cstdio>
-
 #include "strike_scenario.hpp"
 #include "strike_timeline.hpp"
 
-int main() {
+/*
+ * Runs the authoritative deterministic core
+ * and records frames for rendering.
+ */
+StrikeTimeline load_recorded_timeline() {
     StrikeScenario scenario;
     scenario.init();
 
@@ -12,11 +14,7 @@ int main() {
     while (scenario.core.tick < 200) {
         scenario.step();
         timeline.push_back(scenario.snapshot());
-
-        printf("[core] tick=%llu\n",
-               (unsigned long long)scenario.core.tick);
     }
 
-    printf("[done] recorded %zu frames\n", timeline.size());
-    return 0;
+    return timeline;
 }

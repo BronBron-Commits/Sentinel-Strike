@@ -10,3 +10,7 @@
  * Used for rewind, playback, and offline rendering.
  */
 using StrikeTimeline = std::vector<StrikeFrame>;
+
+// Deterministic replay source
+StrikeTimeline load_recorded_timeline();
+

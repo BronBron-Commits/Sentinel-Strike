@@ -1,5 +1,8 @@
 #include "strike_scenario.hpp"
 
+#include <simcore/sim_update.hpp>
+#include <simcore/sim_initial_state.hpp>
+
 #include "f16_initial_state.hpp"
 #include "sam_initial_state.hpp"
 #include "missile_initial_state.hpp"
@@ -10,25 +13,27 @@
 #include "missile_kinematics.hpp"
 
 static constexpr uint64_t LOCK_TICKS_REQUIRED = 30;
-static constexpr float   GUIDANCE_GAIN = 0.08f;
-static constexpr float   DT = 1.0f;
+static constexpr double   GUIDANCE_DT = 0.08;
+static constexpr float    KIN_DT      = 1.0f;
 
 void StrikeScenario::init() {
-    tick    = 0;
+    core    = sim_initial_state();
     f16     = f16_initial_state();
     sam     = sam_initial_state();
     missile = missile_initial_state();
 }
 
 void StrikeScenario::step() {
-    sam_update_radar_lock(sam, f16, tick);
+    sim_update(core);
+
+    sam_update_radar_lock(sam, f16, core.tick);
 
     if (missile_launch_predicate(
             sam,
             missile,
-            tick,
-            LOCK_TICKS_REQUIRED
-        )) {
+            core.tick,
+            LOCK_TICKS_REQUIRED))
+    {
         missile.x  = sam.x;
         missile.y  = sam.y;
         missile.vx = 0.0;
@@ -36,24 +41,22 @@ void StrikeScenario::step() {
     }
 
     if (missile.active) {
-        missile_update_guidance(missile, f16, GUIDANCE_GAIN, tick);
-        missile_update_kinematics(missile, f16, DT);
+        missile_update_guidance(missile, f16, GUIDANCE_DT, core.tick);
+        missile_update_kinematics(missile, f16, KIN_DT);
     }
-
-    ++tick;
 }
 
 StrikeFrame StrikeScenario::snapshot() const {
     StrikeFrame f{};
-    f.tick = tick;
-
-    f.sam.x = sam.x;
-    f.sam.y = sam.y;
+    f.tick = core.tick;
 
     f.f16.x  = f16.x;
     f.f16.y  = f16.y;
     f.f16.vx = f16.vx;
     f.f16.vy = f16.vy;
+
+    f.sam.x = sam.x;
+    f.sam.y = sam.y;
 
     f.missile.active = missile.active;
     f.missile.x  = missile.x;
