@@ -1,14 +1,17 @@
-#include "missile_kinematics.hpp"
+#include "missile_state.hpp"
 
-void missile_update_kinematics(
-    MissileState& missile
-) {
-    if (!missile.active || missile.detonated)
+/*
+ * Deterministic missile kinematics
+ * --------------------------------
+ * Pure Euler integration.
+ * No guidance, no randomness.
+ */
+void missile_update_kinematics(MissileState& m)
+{
+    if (!m.active)
         return;
 
-    // simple straight-line motion
-    missile.x += missile.vx;
-    missile.y += missile.vy;
-
-    missile.tick++;
+    m.x += m.vx;
+    m.y += m.vy;
+    m.tick++;
 }
