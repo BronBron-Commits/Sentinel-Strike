@@ -11,6 +11,7 @@ add_executable(strike-render
 
 target_link_libraries(strike-render
     OpenGL::GL
+    OpenGL::GLU
     SDL2::SDL2
 )
 

@@ -1,45 +1,49 @@
+#include <SDL2/SDL.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <SDL2/SDL.h>
 #include <cmath>
 
 #include "strike_timeline.hpp"
 #include "strike_frame.hpp"
 
-/* ---------- draw helpers ---------- */
+/* ----------------- 3D helpers ----------------- */
 
-static void draw_triangle(float x, float y, float angle) {
+static void draw_cube(float x, float y, float z, float s) {
+    float h = s * 0.5f;
     glPushMatrix();
-    glTranslatef(x, y, 0);
-    glRotatef(angle * 57.2958f, 0, 0, 1);
+    glTranslatef(x, y, z);
 
-    glBegin(GL_TRIANGLES);
-        glVertex2f( 8,  0);
-        glVertex2f(-6,  4);
-        glVertex2f(-6, -4);
+    glBegin(GL_QUADS);
+        glVertex3f(-h,-h, h); glVertex3f( h,-h, h);
+        glVertex3f( h, h, h); glVertex3f(-h, h, h);
+
+        glVertex3f(-h,-h,-h); glVertex3f(-h, h,-h);
+        glVertex3f( h, h,-h); glVertex3f( h,-h,-h);
+
+        glVertex3f(-h,-h,-h); glVertex3f(-h,-h, h);
+        glVertex3f(-h, h, h); glVertex3f(-h, h,-h);
+
+        glVertex3f( h,-h,-h); glVertex3f( h, h,-h);
+        glVertex3f( h, h, h); glVertex3f( h,-h, h);
+
+        glVertex3f(-h, h,-h); glVertex3f(-h, h, h);
+        glVertex3f( h, h, h); glVertex3f( h, h,-h);
+
+        glVertex3f(-h,-h,-h); glVertex3f( h,-h,-h);
+        glVertex3f( h,-h, h); glVertex3f(-h,-h, h);
     glEnd();
 
     glPopMatrix();
 }
 
-static void draw_square(float x, float y, float s) {
-    glBegin(GL_QUADS);
-        glVertex2f(x - s, y - s);
-        glVertex2f(x + s, y - s);
-        glVertex2f(x + s, y + s);
-        glVertex2f(x - s, y + s);
-    glEnd();
-}
-
-static void draw_arrow(float x, float y, float vx, float vy) {
-    const float scale = 0.1f;
+static void draw_arrow(float x, float y, float z, float vx, float vy) {
     glBegin(GL_LINES);
-        glVertex2f(x, y);
-        glVertex2f(x + vx * scale, y + vy * scale);
+        glVertex3f(x, y, z);
+        glVertex3f(x + vx, y + vy, z);
     glEnd();
 }
 
-/* ---------- TEMP timeline generator ---------- */
+/* ----------------- TEMP timeline ----------------- */
 
 static StrikeTimeline build_demo_timeline() {
     StrikeTimeline t;
@@ -68,13 +72,15 @@ static StrikeTimeline build_demo_timeline() {
     return t;
 }
 
-/* ---------- renderer ---------- */
+/* ----------------- Renderer ----------------- */
 
-int main() {
+int main(int argc, char **argv) {
+    (void)argc; (void)argv;
+
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_Window *win = SDL_CreateWindow(
-        "Sentinel-Strike Renderer",
+        "Sentinel-Strike — 3D Renderer",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         1280, 720,
@@ -84,11 +90,11 @@ int main() {
     SDL_GLContext ctx = SDL_GL_CreateContext(win);
     SDL_GL_SetSwapInterval(1);
 
+    glEnable(GL_DEPTH_TEST);
+
     int w, h;
     SDL_GetWindowSize(win, &w, &h);
     glViewport(0, 0, w, h);
-
-    glDisable(GL_DEPTH_TEST);
 
     StrikeTimeline timeline = build_demo_timeline();
     size_t frame = 0;
@@ -104,50 +110,67 @@ int main() {
                 e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
                 glViewport(0, 0, e.window.data1, e.window.data2);
             }
+
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.sym == SDLK_RIGHT && frame + 1 < timeline.size())
+                    frame++;
+                if (e.key.keysym.sym == SDLK_LEFT && frame > 0)
+                    frame--;
+            }
         }
 
-        frame = (frame + 1) % timeline.size();
         const StrikeFrame &f = timeline[frame];
+        const float z = 0.0f;
 
         float cx = (f.f16.x + f.missile.x) * 0.5f;
         float cy = (f.f16.y + f.missile.y) * 0.5f;
 
+        glClearColor(0.02f, 0.02f, 0.04f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(cx - 500, cx + 500, cy - 300, cy + 300, -1, 1);
+        gluPerspective(60.0, (double)w / h, 1.0, 5000.0);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+        gluLookAt(
+            cx - 600.0f, cy - 400.0f, 600.0f,
+            cx, cy, z,
+            0.0f, 0.0f, 1.0f
+        );
 
-        glClearColor(0.02f, 0.02f, 0.04f, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        /* trails */
 
-        glColor4f(0.4f, 0.6f, 1.0f, 0.4f);
+        glColor3f(0.4f, 0.6f, 1.0f);
         glBegin(GL_LINE_STRIP);
         for (size_t i = 0; i <= frame; ++i)
-            glVertex2f(timeline[i].f16.x, timeline[i].f16.y);
+            glVertex3f(timeline[i].f16.x, timeline[i].f16.y, z);
         glEnd();
 
-        glColor4f(1.0f, 0.4f, 0.2f, 0.4f);
+        glColor3f(1.0f, 0.4f, 0.2f);
         glBegin(GL_LINE_STRIP);
         for (size_t i = 0; i <= frame; ++i)
-            glVertex2f(timeline[i].missile.x, timeline[i].missile.y);
+            glVertex3f(timeline[i].missile.x, timeline[i].missile.y, z);
         glEnd();
 
-        glColor3f(0.8f, 0.8f, 0.2f);
-        draw_square(f.sam.x, f.sam.y, 6);
+        /* objects */
+
+        glColor3f(0.9f, 0.9f, 0.2f);
+        draw_cube(f.sam.x, f.sam.y, z, 20.0f);
 
         glColor3f(0.3f, 0.6f, 1.0f);
-        draw_triangle(f.f16.x, f.f16.y,
-            std::atan2(f.f16.vy, f.f16.vx));
-
-        draw_arrow(f.f16.x, f.f16.y, f.f16.vx, f.f16.vy);
+        draw_cube(f.f16.x, f.f16.y, z, 16.0f);
+        draw_arrow(f.f16.x, f.f16.y, z,
+                   f.f16.vx * 10.0f,
+                   f.f16.vy * 10.0f);
 
         if (f.missile.active) {
             glColor3f(1.0f, 0.3f, 0.1f);
-            draw_square(f.missile.x, f.missile.y, 3);
-            draw_arrow(f.missile.x, f.missile.y,
-                       f.missile.vx, f.missile.vy);
+            draw_cube(f.missile.x, f.missile.y, z, 10.0f);
+            draw_arrow(f.missile.x, f.missile.y, z,
+                       f.missile.vx * 10.0f,
+                       f.missile.vy * 10.0f);
         }
 
         SDL_GL_SwapWindow(win);
