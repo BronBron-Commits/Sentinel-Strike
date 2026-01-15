@@ -1,5 +1,6 @@
 add_executable(sentinel-strike
     main.cpp
+    sam_radar.cpp
 )
 
 target_include_directories(sentinel-strike PRIVATE
