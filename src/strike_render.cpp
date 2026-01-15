@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_Window *win = SDL_CreateWindow(
-        "Sentinel-Strike — 3D Renderer",
+        "Sentinel-Strike — 3D Replay",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         1280, 720,
@@ -99,6 +99,9 @@ int main(int argc, char **argv) {
     StrikeTimeline timeline = build_demo_timeline();
     size_t frame = 0;
 
+    bool playing = true;
+    uint32_t last_ticks = SDL_GetTicks();
+
     bool running = true;
     while (running) {
         SDL_Event e;
@@ -108,15 +111,27 @@ int main(int argc, char **argv) {
 
             if (e.type == SDL_WINDOWEVENT &&
                 e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                glViewport(0, 0, e.window.data1, e.window.data2);
+                w = e.window.data1;
+                h = e.window.data2;
+                glViewport(0, 0, w, h);
             }
 
             if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.sym == SDLK_RIGHT && frame + 1 < timeline.size())
-                    frame++;
-                if (e.key.keysym.sym == SDLK_LEFT && frame > 0)
-                    frame--;
+                switch (e.key.keysym.sym) {
+                    case SDLK_RIGHT: if (frame + 1 < timeline.size()) frame++; break;
+                    case SDLK_LEFT:  if (frame > 0) frame--; break;
+                    case SDLK_SPACE: playing = !playing; break;
+                    case SDLK_r:     frame = 0; break;
+                    case SDLK_ESCAPE: running = false; break;
+                }
             }
+        }
+
+        uint32_t now = SDL_GetTicks();
+        if (playing && now - last_ticks >= 16) {
+            if (frame + 1 < timeline.size())
+                frame++;
+            last_ticks = now;
         }
 
         const StrikeFrame &f = timeline[frame];
@@ -140,8 +155,6 @@ int main(int argc, char **argv) {
             0.0f, 0.0f, 1.0f
         );
 
-        /* trails */
-
         glColor3f(0.4f, 0.6f, 1.0f);
         glBegin(GL_LINE_STRIP);
         for (size_t i = 0; i <= frame; ++i)
@@ -153,8 +166,6 @@ int main(int argc, char **argv) {
         for (size_t i = 0; i <= frame; ++i)
             glVertex3f(timeline[i].missile.x, timeline[i].missile.y, z);
         glEnd();
-
-        /* objects */
 
         glColor3f(0.9f, 0.9f, 0.2f);
         draw_cube(f.sam.x, f.sam.y, z, 20.0f);
