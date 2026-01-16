@@ -9,7 +9,7 @@ inline F16State f16_initial_state()
     s.y = 1000.0; // altitude
     s.z = 0.0;
 
-    s.vx = 250.0; // forward speed
+    s.vx = 50.0; // forward speed
     s.vy = 0.0;
     s.vz = 0.0;
 

@@ -9,7 +9,7 @@
 /* ----------------- helpers ----------------- */
 
 static void draw_grid(float size, float step) {
-    glColor3f(0.15f, 0.15f, 0.18f);
+    glColor3f(0.25f, 0.25f, 0.30f);
     glBegin(GL_LINES);
     for (float i = -size; i <= size; i += step) {
         glVertex3f(i, -size, 0.0f);
@@ -151,13 +151,13 @@ int main(int argc, char **argv) {
         draw_grid(2000.0f, 100.0f);
 
         /* ---- trails ---- */
-        glColor3f(0.4f, 0.6f, 1.0f);
+        glColor3f(0.2f, 0.8f, 1.0f);
         glBegin(GL_LINE_STRIP);
         for (size_t i = 0; i <= frame; ++i)
             glVertex3f(timeline[i].f16.x, timeline[i].f16.y, z);
         glEnd();
 
-        glColor3f(1.0f, 0.4f, 0.2f);
+        glColor3f(1.0f, 0.2f, 0.2f);
         glBegin(GL_LINE_STRIP);
         for (size_t i = 0; i <= frame; ++i)
             glVertex3f(timeline[i].missile.x, timeline[i].missile.y, z);
@@ -170,15 +170,15 @@ int main(int argc, char **argv) {
         glColor3f(0.3f, 0.6f, 1.0f);
         draw_cube(f.f16.x, f.f16.y, z, 16.0f);
         draw_arrow(f.f16.x, f.f16.y, z,
-                   f.f16.vx * 10.0f,
-                   f.f16.vy * 10.0f);
+                   f.f16.vx * 25.0f,
+                   f.f16.vy * 25.0f);
 
         if (f.missile.active) {
             glColor3f(1.0f, 0.3f, 0.1f);
             draw_cube(f.missile.x, f.missile.y, z, 10.0f);
             draw_arrow(f.missile.x, f.missile.y, z,
-                       f.missile.vx * 10.0f,
-                       f.missile.vy * 10.0f);
+                       f.missile.vx * 25.0f,
+                       f.missile.vy * 25.0f);
         }
 
         SDL_GL_SwapWindow(win);
