@@ -23,5 +23,6 @@ struct StrikeFrame {
 
     F16State     f16;
     SamState     sam;
-    MissileState missile;
+    static constexpr int MAX_MISSILES = 4;
+    MissileState missiles[MAX_MISSILES];
 };

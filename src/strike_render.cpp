@@ -121,8 +121,23 @@ int main(int argc, char **argv) {
         const StrikeFrame &f = timeline[frame];
         const float z = 0.0f;
 
-        const float cx = (f.f16.x + f.missile.x) * 0.5f;
-        const float cy = (f.f16.y + f.missile.y) * 0.5f;
+        float cx = f.f16.x;
+
+        float cy = f.f16.y;
+
+        for (int i = 0; i < StrikeFrame::MAX_MISSILES; ++i) {
+
+            if (f.missiles[i].active) {
+
+                cx = (cx + f.missiles[i].x) * 0.5f;
+
+                cy = (cy + f.missiles[i].y) * 0.5f;
+
+                break;
+
+            }
+
+        }
 
         glClearColor(0.02f, 0.02f, 0.04f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -160,7 +175,7 @@ int main(int argc, char **argv) {
         glColor3f(1.0f, 0.2f, 0.2f);
         glBegin(GL_LINE_STRIP);
         for (size_t i = 0; i <= frame; ++i)
-            glVertex3f(timeline[i].missile.x, timeline[i].missile.y, z);
+            glVertex3f(timeline[i].missiles[0].x, timeline[i].missiles[0].y, z);
         glEnd();
 
         /* ---- objects ---- */
@@ -173,12 +188,14 @@ int main(int argc, char **argv) {
                    f.f16.vx * 25.0f,
                    f.f16.vy * 25.0f);
 
-        if (f.missile.active) {
-            glColor3f(1.0f, 0.3f, 0.1f);
-            draw_cube(f.missile.x, f.missile.y, z, 10.0f);
-            draw_arrow(f.missile.x, f.missile.y, z,
-                       f.missile.vx * 25.0f,
-                       f.missile.vy * 25.0f);
+        for (int i = 0; i < StrikeFrame::MAX_MISSILES; ++i) {
+            if (f.missiles[i].active) {
+                glColor3f(1.0f, 0.3f, 0.1f);
+                draw_cube(f.missiles[i].x, f.missiles[i].y, z, 10.0f);
+                draw_arrow(f.missiles[i].x, f.missiles[i].y, z,
+                           f.missiles[i].vx * 10.0f,
+                           f.missiles[i].vy * 10.0f);
+            }
         }
 
         SDL_GL_SwapWindow(win);

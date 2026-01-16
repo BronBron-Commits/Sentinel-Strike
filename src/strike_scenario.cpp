@@ -24,12 +24,14 @@ static constexpr double   BREAK_G      = 5.0;     // 5g evasive turn
 
 static constexpr double   GUIDANCE_DT  = 0.08;
 static constexpr float    KIN_DT       = 1.0f;
+static constexpr uint64_t MISSILE_SPACING_TICKS = 10;
 
 void StrikeScenario::init() {
     core    = sim_initial_state();
     f16     = f16_initial_state();
     sam     = sam_initial_state();
-    missile = missile_initial_state();
+    for (int i = 0; i < MAX_MISSILES; ++i)
+        missiles[i] = missile_initial_state();
 }
 
 static inline void rotate_velocity(double& vx, double& vy, double dtheta) {
@@ -47,7 +49,9 @@ void StrikeScenario::step() {
     sim_update(core);
 
     /* ---- F-16 straight flight until missile launch ---- */
-    bool evasive = missile.active;
+    bool evasive = false;
+    for (int i = 0; i < MAX_MISSILES; ++i)
+        evasive |= missiles[i].active;
 
     const double speed = std::hypot(f16.vx, f16.vy);
 
@@ -78,22 +82,26 @@ void StrikeScenario::step() {
     sam_update_radar_lock(sam, f16, core.tick);
 
     /* ---- missile launch ---- */
-    if (missile_launch_predicate(
-            sam,
-            missile,
-            core.tick,
-            LOCK_TICKS_REQUIRED))
-    {
-        missile.x  = sam.x;
-        missile.y  = sam.y;
-        missile.vx = 0.0;
-        missile.vy = 20.0;
+    for (int i = 0; i < MAX_MISSILES; ++i) {
+        if (missile_launch_predicate(
+                sam,
+                missiles[i],
+                core.tick - i * MISSILE_SPACING_TICKS,
+                LOCK_TICKS_REQUIRED))
+        {
+            missiles[i].x  = sam.x;
+            missiles[i].y  = sam.y;
+            missiles[i].vx = 0.0f;
+            missiles[i].vy = 20.0f;
+        }
     }
 
     /* ---- missile update ---- */
-    if (missile.active) {
-        missile_update_guidance(missile, f16, GUIDANCE_DT, core.tick);
-        missile_update_kinematics(missile, f16, KIN_DT);
+    for (int i = 0; i < MAX_MISSILES; ++i) {
+        if (missiles[i].active) {
+            missile_update_guidance(missiles[i], f16, GUIDANCE_DT, core.tick);
+            missile_update_kinematics(missiles[i], f16, KIN_DT);
+        }
     }
 }
 
@@ -103,7 +111,8 @@ StrikeFrame StrikeScenario::snapshot() const {
 
     f.f16 = f16;
     f.sam = sam;
-    f.missile = missile;
+    for (int i = 0; i < MAX_MISSILES; ++i)
+        f.missiles[i] = missiles[i];
 
     return f;
 }
