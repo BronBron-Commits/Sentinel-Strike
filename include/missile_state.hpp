@@ -6,7 +6,7 @@ struct MissileState {
     float y = 0.0f;
     float vx = 0.0f;
     float vy = 0.0f;
-    float speed = 20.0f;
+    float speed = 120.0f;
 
     bool active = false;     // flying
     bool detonated = false; // fuse triggered
