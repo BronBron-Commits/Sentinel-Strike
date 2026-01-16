@@ -11,6 +11,7 @@
 #include "missile_launch.hpp"
 #include "missile_guidance.hpp"
 #include "missile_kinematics.hpp"
+#include <cstdio>
 
 static constexpr uint64_t LOCK_TICKS_REQUIRED = 30;
 static constexpr double   GUIDANCE_DT = 0.08;
@@ -25,6 +26,19 @@ void StrikeScenario::init() {
 
 void StrikeScenario::step() {
     sim_update(core);
+
+    /* ---- F-16 straight & level flight ---- */
+    static constexpr double F16_DT = 1.0;
+    f16.x += f16.vx * F16_DT;
+    f16.y += f16.vy * F16_DT;
+    f16.tick = core.tick;
+if (core.tick % 20 == 0) { 
+    printf("[f16] tick=%llu pos=(%.1f, %.1f) vel=(%.1f, %.1f)\n", 
+        (unsigned long long)core.tick, 
+        f16.x, f16.y, f16.vx, f16.vy); 
+} 
+
+
 
     sam_update_radar_lock(sam, f16, core.tick);
 
