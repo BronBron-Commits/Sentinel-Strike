@@ -1,6 +1,8 @@
 #include "missile_guidance.hpp"
 #include <cmath>
 
+static constexpr uint64_t BOOST_TICKS = 25;
+
 bool missile_update_guidance(
     MissileState& missile,
     const F16State& target,
@@ -10,12 +12,21 @@ bool missile_update_guidance(
     if (!missile.active || missile.detonated)
         return false;
 
-    // Vector to target
+    missile.tick = tick;
+
+    if (missile.phase == MissilePhase::BOOST) {
+        missile.speed += missile.accel;
+        if (missile.speed >= missile.max_speed ||
+            tick - missile.launch_tick >= BOOST_TICKS) {
+            missile.speed = missile.max_speed;
+            missile.phase = MissilePhase::SUSTAIN;
+        }
+    }
+
     const double dx = target.x - missile.x;
     const double dy = target.y - missile.y;
-    const double dist = std::sqrt(dx * dx + dy * dy);
+    const double dist = std::sqrt(dx*dx + dy*dy);
 
-    // Hit condition (simple proximity fuse)
     constexpr double HIT_RADIUS = 10.0;
     if (dist < HIT_RADIUS) {
         missile.detonated = true;
@@ -24,7 +35,6 @@ bool missile_update_guidance(
         return true;
     }
 
-    // Normalize direction
     if (dist > 1e-6) {
         const double nx = dx / dist;
         const double ny = dy / dist;
@@ -33,10 +43,8 @@ bool missile_update_guidance(
         missile.vy = ny * missile.speed;
     }
 
-    // Integrate
     missile.x += missile.vx * dt;
     missile.y += missile.vy * dt;
-    missile.tick = tick;
 
     return false;
 }
