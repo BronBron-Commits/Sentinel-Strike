@@ -48,9 +48,23 @@ void render_strike(const StrikeScenario& scenario) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    const float yaw = (float)scenario.f16.yaw;
+
+    const float cam_dist   = 40.0f;
+    const float cam_height = 25.0f;
+
+    const float fx = cosf(yaw);
+    const float fz = sinf(yaw);
+
+    const float cx = f16_x - fx * cam_dist;
+    const float cz = f16_z - fz * cam_dist;
+
+    const float lx = f16_x + fx * 10.0f;
+    const float lz = f16_z + fz * 10.0f;
+
     gluLookAt(
-        f16_x - 40.0f, 40.0f, f16_z - 40.0f,
-        f16_x,          0.0f, f16_z,
+        cx, cam_height, cz,
+        lx, 0.0f, lz,
         0.0f, 1.0f, 0.0f
     );
 
