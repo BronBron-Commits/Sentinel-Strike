@@ -5,6 +5,19 @@
 #include <GL/glu.h>
 #include <cmath>
 
+static void draw_ground(float size) {
+    glDisable(GL_LIGHTING);
+    glColor3f(0.15f, 0.55f, 0.20f);
+    glBegin(GL_QUADS);
+        glVertex3f(-size, 0.0f, -size);
+        glVertex3f( size, 0.0f, -size);
+        glVertex3f( size, 0.0f,  size);
+        glVertex3f(-size, 0.0f,  size);
+    glEnd();
+    glEnable(GL_LIGHTING);
+}
+
+
 /* render-only camera yaw (decoupled from vehicle) */
 float camera_yaw = 0.0f;
 
@@ -16,6 +29,8 @@ static float f16_x = 0.0f;
 static float f16_z = 0.0f;
 
 static void draw_grid(int half, float step) {
+
+
     glColor3f(0.25f, 0.25f, 0.25f);
     glBegin(GL_LINES);
     for (int i = -half; i <= half; ++i) {
@@ -90,7 +105,8 @@ void render_strike(const StrikeScenario& scenario) {
         0.0f, 1.0f, 0.0f
     );
 
-    draw_grid(100, 10.0f);
+    /* draw_grid disabled */
+    draw_ground(5000.0f);
 
     glTranslatef(f16_x, 0.0f, f16_z);
     glRotatef(scenario.f16.yaw * 57.2958f, 0, 1, 0);
