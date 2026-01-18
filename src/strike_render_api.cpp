@@ -3,8 +3,12 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <cmath>
 
-/* draw ground grid */
+/* render-side debug position */
+static float f16_x = 0.0f;
+static float f16_z = 0.0f;
+
 static void draw_grid(int half, float step) {
     glColor3f(0.25f, 0.25f, 0.25f);
     glBegin(GL_LINES);
@@ -18,44 +22,22 @@ static void draw_grid(int half, float step) {
     glEnd();
 }
 
-/* simple cube for the F-16 */
 static void draw_cube(float s) {
     glBegin(GL_QUADS);
         glColor3f(0.2f, 0.8f, 0.2f);
-
-        // front
-        glVertex3f(-s, 0.0f,  s);
-        glVertex3f( s, 0.0f,  s);
-        glVertex3f( s, 2*s,  s);
-        glVertex3f(-s, 2*s,  s);
-
-        // back
-        glVertex3f(-s, 0.0f, -s);
-        glVertex3f(-s, 2*s, -s);
-        glVertex3f( s, 2*s, -s);
-        glVertex3f( s, 0.0f, -s);
-
-        // left
-        glVertex3f(-s, 0.0f, -s);
-        glVertex3f(-s, 0.0f,  s);
-        glVertex3f(-s, 2*s,  s);
-        glVertex3f(-s, 2*s, -s);
-
-        // right
-        glVertex3f( s, 0.0f, -s);
-        glVertex3f( s, 2*s, -s);
-        glVertex3f( s, 2*s,  s);
-        glVertex3f( s, 0.0f,  s);
-
-        // top
-        glVertex3f(-s, 2*s, -s);
-        glVertex3f(-s, 2*s,  s);
-        glVertex3f( s, 2*s,  s);
-        glVertex3f( s, 2*s, -s);
+        glVertex3f(-s, 0, -s); glVertex3f( s, 0, -s);
+        glVertex3f( s, 2*s, -s); glVertex3f(-s, 2*s, -s);
+        glVertex3f(-s, 0,  s); glVertex3f( s, 0,  s);
+        glVertex3f( s, 2*s,  s); glVertex3f(-s, 2*s,  s);
     glEnd();
 }
 
 void render_strike(const StrikeScenario& scenario) {
+    /* advance forward in yaw direction */
+    const float speed = 1.2f;
+    f16_x += cosf(scenario.f16.yaw) * speed;
+    f16_z += sinf(scenario.f16.yaw) * speed;
+
     glClearColor(0.05f, 0.05f, 0.08f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -66,19 +48,17 @@ void render_strike(const StrikeScenario& scenario) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    /* fixed camera looking at origin */
     gluLookAt(
-        0.0, 60.0, 120.0,
-        0.0,  0.0,   0.0,
-        0.0,  1.0,   0.0
+        f16_x - 40.0f, 40.0f, f16_z - 40.0f,
+        f16_x,          0.0f, f16_z,
+        0.0f, 1.0f, 0.0f
     );
 
-    /* grid floor */
     draw_grid(100, 10.0f);
 
-    /* orient F-16 cube at origin */
-    glRotatef(scenario.f16.yaw   * 57.2958f, 0.0f, 1.0f, 0.0f);
-    glRotatef(scenario.f16.pitch * 57.2958f, 1.0f, 0.0f, 0.0f);
+    glTranslatef(f16_x, 0.0f, f16_z);
+    glRotatef(scenario.f16.yaw * 57.2958f, 0, 1, 0);
+    glRotatef(scenario.f16.pitch * 57.2958f, 1, 0, 0);
 
     draw_cube(2.0f);
 }

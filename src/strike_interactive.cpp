@@ -1,14 +1,9 @@
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <SDL2/SDL.h>
-#include <vector>
-#include <cstdint>
+#include <GL/gl.h>
 
-/* forward declarations */
-#include "strike_render_api.hpp"
-
-#include "strike_input.hpp"
 #include "strike_scenario.hpp"
+#include "strike_input.hpp"
+#include "strike_render_api.hpp"
 
 extern void apply_control_input(StrikeScenario&, const ControlInput&);
 
@@ -18,17 +13,11 @@ int main() {
     SDL_Window* win = SDL_CreateWindow(
         "Sentinel Strike Interactive",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        1024, 768,
-        SDL_WINDOW_OPENGL
+        1024, 768, SDL_WINDOW_OPENGL
     );
 
     SDL_GLContext ctx = SDL_GL_CreateContext(win);
     glEnable(GL_DEPTH_TEST);
-    SDL_GL_SetSwapInterval(1);
-
-    glEnable(GL_DEPTH_TEST);
-
-    glViewport(0, 0, 1024, 768);
 
     StrikeScenario scenario;
     scenario.init();
@@ -38,59 +27,32 @@ int main() {
 
     while (running) {
         SDL_Event e;
-        std::vector<ControlInput> inputs;
-
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT)
                 running = false;
 
             if (e.type == SDL_KEYDOWN) {
+                ControlInput in{};
+                in.tick = tick;
+                in.value = 0.02f;
+
                 switch (e.key.keysym.sym) {
-                    case SDLK_w: inputs.push_back({tick, ControlAction::F16_PitchUp, 0.01f}); break;
-                    case SDLK_s: inputs.push_back({tick, ControlAction::F16_PitchDown, 0.01f}); break;
-                    case SDLK_a: inputs.push_back({tick, ControlAction::F16_YawLeft, 0.01f}); break;
-                    case SDLK_d: inputs.push_back({tick, ControlAction::F16_YawRight, 0.01f}); break;
+                    case SDLK_w: in.action = ControlAction::F16_PitchUp; break;
+                    case SDLK_s: in.action = ControlAction::F16_PitchDown; break;
+                    case SDLK_a: in.action = ControlAction::F16_YawLeft; break;
+                    case SDLK_d: in.action = ControlAction::F16_YawRight; break;
+                    default: continue;
                 }
+
+                apply_control_input(scenario, in);
             }
         }
 
-        for (auto& in : inputs)
-            apply_control_input(scenario, in);
-
         scenario.step();
-    {
-
-        const float speed = 50.0f; /* units per second */
-
-        const float dt = 1.0f / 60.0f;
-
-        scenario.f16.vx = cosf(scenario.f16.yaw) * speed;
-
-        scenario.f16.vy = sinf(scenario.f16.yaw) * speed;
-
-        scenario.f16.x  += scenario.f16.vx * dt;
-
-        scenario.f16.y  += scenario.f16.vy * dt;
-
-    }
-    {
-
-        const float speed = 50.0f; /* units per second */
-
-        const float dt = 1.0f / 60.0f;
-
-        scenario.f16.vx = cosf(scenario.f16.yaw) * speed;
-
-        scenario.f16.vy = sinf(scenario.f16.yaw) * speed;
-
-        scenario.f16.x  += scenario.f16.vx * dt;
-
-        scenario.f16.y  += scenario.f16.vy * dt;
-
-    }
         render_strike(scenario);
-
         SDL_GL_SwapWindow(win);
+
+        SDL_Delay(16);
         tick++;
     }
 
