@@ -27,6 +27,7 @@ static void draw_f16_primitive();
 /* render-side debug position */
 static float f16_x = 0.0f;
 static float f16_z = 0.0f;
+static float f16_y = 0.0f;
 
 static void draw_grid(int half, float step) {
 
@@ -56,12 +57,23 @@ static void draw_cube(float s) {
 }
 
 void render_strike(const StrikeScenario& scenario) {
-    /* advance forward in yaw direction */
+    /* advance forward using yaw + pitch */
     const float speed = 1.2f;
-    f16_x += cosf(scenario.f16.yaw) * speed;
-    f16_z += sinf(scenario.f16.yaw) * speed;
+    const float yaw   = scenario.f16.yaw;
+    const float pitch = scenario.f16.pitch;
 
-    glClearColor(0.35f, 0.45f, 0.65f, 1.0f);
+    const float fx = cosf(pitch) * cosf(yaw);
+    const float fy = sinf(pitch);
+    const float fz = cosf(pitch) * sinf(yaw);
+
+    const float cam_dist   = 40.0f;
+    const float cam_height = 35.0f;
+
+    f16_x += fx * speed;
+    f16_y += fy * speed;
+    f16_z += fz * speed;
+
+    glClearColor(0.05f, 0.05f, 0.08f, 1.0f);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     const GLfloat light_dir[] = { -0.4f, -1.0f, -0.6f, 0.0f };
@@ -85,14 +97,6 @@ void render_strike(const StrikeScenario& scenario) {
     /* camera rotation (view-space) */
     glRotatef(-camera_yaw * 57.2958f, 0.0f, 1.0f, 0.0f);
 
-    const float yaw = (float)scenario.f16.yaw;
-
-    const float cam_dist   = 40.0f;
-    const float cam_height = 25.0f;
-
-    const float fx = cosf(yaw);
-    const float fz = sinf(yaw);
-
     const float cx = f16_x - fx * cam_dist;
     const float cz = f16_z - fz * cam_dist;
 
@@ -108,7 +112,7 @@ void render_strike(const StrikeScenario& scenario) {
     /* draw_grid disabled */
     draw_ground(5000.0f);
 
-    glTranslatef(f16_x, 0.0f, f16_z);
+    glTranslatef(f16_x, f16_y, f16_z);
     glRotatef(scenario.f16.yaw * 57.2958f, 0, 1, 0);
     glRotatef(scenario.f16.pitch * 57.2958f, 1, 0, 0);
 
