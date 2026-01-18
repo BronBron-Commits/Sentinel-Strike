@@ -5,6 +5,9 @@
 #include <GL/glu.h>
 #include <cmath>
 
+/* render-only camera yaw (decoupled from vehicle) */
+float camera_yaw = 0.0f;
+
 static void draw_f16_primitive();
 
 
@@ -56,10 +59,16 @@ void render_strike(const StrikeScenario& scenario) {
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+
+    /* camera rotation (view-space) */
+    glRotatef(-camera_yaw * 57.2958f, 0.0f, 1.0f, 0.0f);
     gluPerspective(60.0, 1024.0/768.0, 0.1, 5000.0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    /* camera rotation (view-space) */
+    glRotatef(-camera_yaw * 57.2958f, 0.0f, 1.0f, 0.0f);
 
     const float yaw = (float)scenario.f16.yaw;
 

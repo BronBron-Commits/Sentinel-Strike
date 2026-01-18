@@ -1,3 +1,4 @@
+extern float camera_yaw;
 #include <SDL2/SDL.h>
 #include <GL/gl.h>
 
@@ -40,7 +41,9 @@ int main() {
                     case SDLK_w: in.action = ControlAction::F16_PitchUp; break;
                     case SDLK_s: in.action = ControlAction::F16_PitchDown; break;
                     case SDLK_a: in.action = ControlAction::F16_YawLeft; break;
+                    camera_yaw += 0.03f;
                     case SDLK_d: in.action = ControlAction::F16_YawRight; break;
+                    camera_yaw -= 0.03f;
                     default: continue;
                 }
 
