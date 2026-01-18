@@ -5,6 +5,9 @@
 #include <GL/glu.h>
 #include <cmath>
 
+static void draw_f16_primitive();
+
+
 /* render-side debug position */
 static float f16_x = 0.0f;
 static float f16_z = 0.0f;
@@ -23,6 +26,8 @@ static void draw_grid(int half, float step) {
 }
 
 static void draw_cube(float s) {
+
+
     glBegin(GL_QUADS);
         glColor3f(0.2f, 0.8f, 0.2f);
         glVertex3f(-s, 0, -s); glVertex3f( s, 0, -s);
@@ -74,5 +79,38 @@ void render_strike(const StrikeScenario& scenario) {
     glRotatef(scenario.f16.yaw * 57.2958f, 0, 1, 0);
     glRotatef(scenario.f16.pitch * 57.2958f, 1, 0, 0);
 
-    draw_cube(2.0f);
+    draw_f16_primitive();
 }
+
+static void draw_f16_primitive()
+{
+    /* fuselage */
+    glColor3f(0.7f, 0.7f, 0.75f);
+    glPushMatrix();
+        glScalef(2.5f, 0.6f, 8.0f);
+        glBegin(GL_QUADS);
+            glVertex3f(-1, -1, -1); glVertex3f( 1, -1, -1);
+            glVertex3f( 1,  1, -1); glVertex3f(-1,  1, -1);
+            glVertex3f(-1, -1,  1); glVertex3f( 1, -1,  1);
+            glVertex3f( 1,  1,  1); glVertex3f(-1,  1,  1);
+        glEnd();
+    glPopMatrix();
+
+    /* wings */
+    glColor3f(0.5f, 0.5f, 0.55f);
+    glBegin(GL_QUADS);
+        glVertex3f(-6.0f, 0.0f,  0.5f);
+        glVertex3f( 6.0f, 0.0f,  0.5f);
+        glVertex3f( 4.0f, 0.0f, -2.5f);
+        glVertex3f(-4.0f, 0.0f, -2.5f);
+    glEnd();
+
+    /* vertical tail */
+    glColor3f(0.4f, 0.4f, 0.45f);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(0.0f, 0.0f, -3.0f);
+        glVertex3f(0.0f, 3.0f, -4.5f);
+        glVertex3f(0.0f, 0.0f, -5.5f);
+    glEnd();
+}
+
