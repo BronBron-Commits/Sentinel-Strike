@@ -37,6 +37,8 @@ glEnable(GL_NORMALIZE);
 
     StrikeScenario scenario;
     scenario.init();
+    /* rotate initial F16 orientation so model faces forward */
+    scenario.f16.yaw += M_PI_2;
 
     uint32_t tick = 0;
     bool running = true;
