@@ -58,6 +58,36 @@ int main() {
             apply_control_input(scenario, in);
 
         scenario.step();
+    {
+
+        const float speed = 50.0f; /* units per second */
+
+        const float dt = 1.0f / 60.0f;
+
+        scenario.f16.vx = cosf(scenario.f16.yaw) * speed;
+
+        scenario.f16.vy = sinf(scenario.f16.yaw) * speed;
+
+        scenario.f16.x  += scenario.f16.vx * dt;
+
+        scenario.f16.y  += scenario.f16.vy * dt;
+
+    }
+    {
+
+        const float speed = 50.0f; /* units per second */
+
+        const float dt = 1.0f / 60.0f;
+
+        scenario.f16.vx = cosf(scenario.f16.yaw) * speed;
+
+        scenario.f16.vy = sinf(scenario.f16.yaw) * speed;
+
+        scenario.f16.x  += scenario.f16.vx * dt;
+
+        scenario.f16.y  += scenario.f16.vy * dt;
+
+    }
         render_strike(scenario);
 
         SDL_GL_SwapWindow(win);
