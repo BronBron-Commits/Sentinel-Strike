@@ -44,6 +44,14 @@ void render_strike(const StrikeScenario& scenario) {
     f16_z += sinf(scenario.f16.yaw) * speed;
 
     glClearColor(0.05f, 0.05f, 0.08f, 1.0f);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    const GLfloat light_dir[] = { -0.4f, -1.0f, -0.6f, 0.0f };
+    glLightfv(GL_LIGHT0, GL_POSITION, light_dir);
+
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_PROJECTION);
@@ -89,28 +97,53 @@ static void draw_f16_primitive()
     glPushMatrix();
         glScalef(2.5f, 0.6f, 8.0f);
         glBegin(GL_QUADS);
+            glNormal3f( 0,  0, -1);
             glVertex3f(-1, -1, -1); glVertex3f( 1, -1, -1);
             glVertex3f( 1,  1, -1); glVertex3f(-1,  1, -1);
+
+            glNormal3f( 0,  0,  1);
             glVertex3f(-1, -1,  1); glVertex3f( 1, -1,  1);
             glVertex3f( 1,  1,  1); glVertex3f(-1,  1,  1);
+
+            glNormal3f(-1,  0,  0);
+            glVertex3f(-1, -1, -1); glVertex3f(-1, -1,  1);
+            glVertex3f(-1,  1,  1); glVertex3f(-1,  1, -1);
+
+            glNormal3f( 1,  0,  0);
+            glVertex3f( 1, -1, -1); glVertex3f( 1, -1,  1);
+            glVertex3f( 1,  1,  1); glVertex3f( 1,  1, -1);
+
+            glNormal3f( 0,  1,  0);
+            glVertex3f(-1,  1, -1); glVertex3f( 1,  1, -1);
+            glVertex3f( 1,  1,  1); glVertex3f(-1,  1,  1);
+
+            glNormal3f( 0, -1,  0);
+            glVertex3f(-1, -1, -1); glVertex3f( 1, -1, -1);
+            glVertex3f( 1, -1,  1); glVertex3f(-1, -1,  1);
         glEnd();
+    glPopMatrix();
+
     glPopMatrix();
 
     /* wings */
     glColor3f(0.5f, 0.5f, 0.55f);
     glBegin(GL_QUADS);
+        glNormal3f(0, 1, 0);
         glVertex3f(-6.0f, 0.0f,  0.5f);
         glVertex3f( 6.0f, 0.0f,  0.5f);
         glVertex3f( 4.0f, 0.0f, -2.5f);
         glVertex3f(-4.0f, 0.0f, -2.5f);
     glEnd();
 
+
     /* vertical tail */
     glColor3f(0.4f, 0.4f, 0.45f);
     glBegin(GL_TRIANGLES);
+        glNormal3f(1, 0, 0);
         glVertex3f(0.0f, 0.0f, -3.0f);
         glVertex3f(0.0f, 3.0f, -4.5f);
         glVertex3f(0.0f, 0.0f, -5.5f);
     glEnd();
+
 }
 
