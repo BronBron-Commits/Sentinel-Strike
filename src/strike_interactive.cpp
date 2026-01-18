@@ -23,6 +23,7 @@ int main() {
     );
 
     SDL_GLContext ctx = SDL_GL_CreateContext(win);
+    glEnable(GL_DEPTH_TEST);
     SDL_GL_SetSwapInterval(1);
 
     glEnable(GL_DEPTH_TEST);
@@ -57,7 +58,6 @@ int main() {
             apply_control_input(scenario, in);
 
         scenario.step();
-        printf("tick=%u pitch=%.3f yaw=%.3f\n", tick, scenario.f16.pitch, scenario.f16.yaw); fflush(stdout);
         render_strike(scenario);
 
         SDL_GL_SwapWindow(win);
