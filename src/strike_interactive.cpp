@@ -19,6 +19,21 @@ int main() {
 
     SDL_GLContext ctx = SDL_GL_CreateContext(win);
     glEnable(GL_DEPTH_TEST);
+    /* ---- lighting ---- */
+    glEnable(GL_LIGHTING);
+glEnable(GL_NORMALIZE);
+    glEnable(GL_LIGHT0);
+
+    const GLfloat sun_dir[]   = { -0.4f, -1.0f, -0.2f, 0.0f }; /* directional */
+    const GLfloat sun_diff[]  = { 1.3f, 1.25f, 1.15f, 1.0f };
+    const GLfloat sun_amb[]   = { 0.55f, 0.55f, 0.55f, 1.0f };
+
+    glLightfv(GL_LIGHT0, GL_POSITION, sun_dir);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE,  sun_diff);
+    glLightfv(GL_LIGHT0, GL_AMBIENT,  sun_amb);
+
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
     StrikeScenario scenario;
     scenario.init();

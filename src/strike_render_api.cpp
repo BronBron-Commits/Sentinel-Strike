@@ -31,7 +31,7 @@ static void draw_grid(int half, float step) {
 static void draw_cube(float s) {
 
 
-    glBegin(GL_QUADS);
+    glBegin(GL_QUADS); glNormal3f(0,1,0);
         glColor3f(0.2f, 0.8f, 0.2f);
         glVertex3f(-s, 0, -s); glVertex3f( s, 0, -s);
         glVertex3f( s, 2*s, -s); glVertex3f(-s, 2*s, -s);
@@ -46,7 +46,7 @@ void render_strike(const StrikeScenario& scenario) {
     f16_x += cosf(scenario.f16.yaw) * speed;
     f16_z += sinf(scenario.f16.yaw) * speed;
 
-    glClearColor(0.05f, 0.05f, 0.08f, 1.0f);
+    glClearColor(0.35f, 0.45f, 0.65f, 1.0f);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     const GLfloat light_dir[] = { -0.4f, -1.0f, -0.6f, 0.0f };
@@ -105,7 +105,7 @@ static void draw_f16_primitive()
     glColor3f(0.7f, 0.7f, 0.75f);
     glPushMatrix();
         glScalef(2.5f, 0.6f, 8.0f);
-        glBegin(GL_QUADS);
+        glBegin(GL_QUADS); glNormal3f(0,1,0);
             glNormal3f( 0,  0, -1);
             glVertex3f(-1, -1, -1); glVertex3f( 1, -1, -1);
             glVertex3f( 1,  1, -1); glVertex3f(-1,  1, -1);
@@ -136,7 +136,7 @@ static void draw_f16_primitive()
 
     /* wings */
     glColor3f(0.5f, 0.5f, 0.55f);
-    glBegin(GL_QUADS);
+    glBegin(GL_QUADS); glNormal3f(0,1,0);
         glNormal3f(0, 1, 0);
         glVertex3f(-6.0f, 0.0f,  0.5f);
         glVertex3f( 6.0f, 0.0f,  0.5f);
