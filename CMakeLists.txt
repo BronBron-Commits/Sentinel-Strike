@@ -28,7 +28,6 @@ add_executable(sentinel-strike-interactive
     src/strike_render_api.cpp
 
     src/strike_scenario.cpp
-    src/f16_control.cpp
     src/strike_record.cpp
     src/missile_kinematics.cpp
     src/missile_guidance.cpp
