@@ -10,12 +10,16 @@ void apply_control_input(StrikeScenario& s, const ControlInput& in) {
             s.f16.pitch -= in.value;
             break;
         case ControlAction::F16_YawLeft:
-            s.f16.yaw += in.value;
-            break;
-        case ControlAction::F16_YawRight:
             s.f16.yaw -= in.value;
             break;
-        default:
+        case ControlAction::F16_YawRight:
+            s.f16.yaw += in.value;
+            break;
+        case ControlAction::F16_RollLeft:
+            s.f16.roll -= in.value;
+            break;
+        case ControlAction::F16_RollRight:
+            s.f16.roll += in.value;
             break;
     }
 }
