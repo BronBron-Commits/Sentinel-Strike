@@ -1,3 +1,4 @@
+static void draw_grid(int half, float step);
 #include "strike_render_api.hpp"
 #include "strike_scenario.hpp"
 
@@ -6,6 +7,7 @@
 #include <cmath>
 
 static void draw_ground(float size) {
+    draw_grid(200, 10.0f);
     glDisable(GL_LIGHTING);
     glColor3f(0.15f, 0.55f, 0.20f);
     glBegin(GL_QUADS);
@@ -111,6 +113,7 @@ void render_strike(const StrikeScenario& scenario) {
 
     /* draw_grid disabled */
     draw_ground(5000.0f);
+    draw_grid(200, 10.0f);
 
     glTranslatef(f16_x, f16_y, f16_z);
     glRotatef(scenario.f16.yaw * 57.2958f, 0, 1, 0);
