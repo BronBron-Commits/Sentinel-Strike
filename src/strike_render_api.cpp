@@ -12,18 +12,40 @@ float camera_yaw   = 0.0f;
 float camera_pitch = 0.0f;
 
 
+static float ground_noise(float x, float z) {
+    /* simple deterministic value noise */
+    float n = sinf(x * 0.12f) * cosf(z * 0.15f);
+    n += sinf((x + z) * 0.05f);
+    return n * 0.5f;
+}
+
 static void draw_ground(float size) {
     draw_grid(200, 10.0f);
+
     glDisable(GL_LIGHTING);
-    glColor3f(0.15f, 0.55f, 0.20f);
-    glBegin(GL_QUADS);
-        glVertex3f(-size, 0.0f, -size);
-        glVertex3f( size, 0.0f, -size);
-        glVertex3f( size, 0.0f,  size);
-        glVertex3f(-size, 0.0f,  size);
-    glEnd();
+
+    const float step = 40.0f; /* ground resolution */
+    for (float x = -size; x < size; x += step) {
+        for (float z = -size; z < size; z += step) {
+            float n = ground_noise(x, z);
+
+            float g = 0.45f + n * 0.15f;
+            float r = 0.18f + n * 0.05f;
+            float b = 0.12f + n * 0.03f;
+
+            glColor3f(r, g, b);
+            glBegin(GL_QUADS);
+                glVertex3f(x,       0.0f, z);
+                glVertex3f(x+step,  0.0f, z);
+                glVertex3f(x+step,  0.0f, z+step);
+                glVertex3f(x,       0.0f, z+step);
+            glEnd();
+        }
+    }
+
     glEnable(GL_LIGHTING);
 }
+
 
 
 
