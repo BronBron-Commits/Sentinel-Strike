@@ -153,6 +153,7 @@ void render_strike(const StrikeScenario& scenario) {
 
     glTranslatef(f16_x, f16_y + sinf(f16_x * 0.010f) * 8.0f + cosf(f16_z * 0.012f) * 6.0f + 4.0f, f16_z);
     glRotatef(-90.0f, 0, 1, 0); /* model forward axis correction */
+    glRotatef(180.0f, 0, 1, 0); /* flip model forward */
     glRotatef(scenario.f16.yaw * 57.2958f, 0, 1, 0);
     glRotatef(scenario.f16.pitch * 57.2958f, 1, 0, 0);
     glRotatef(scenario.f16.roll * 57.2958f, 0, 0, 1);
