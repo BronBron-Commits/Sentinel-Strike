@@ -112,19 +112,6 @@ This mode exists strictly for **inspection and visualization**, not gameplay.
 | `↑ ↓` | Rotate camera vertically |
 | `1–5` | Switch camera viewpoints |
 
-### General
-| Key | Action |
-|----|-------|
-| `ESC` | Exit |
-
----
-
-## Project Structure
-
-sentinel-strike/ ├── include/                  # Pure state + simulation headers ├── src/ │   ├── strike_scenario.cpp   # Authoritative simulation logic │   ├── strike_render.cpp     # Deterministic replay renderer │   ├── strike_render_api.cpp # Interactive renderer + camera │   ├── strike_interactive.cpp# Input + camera mode handling │   ├── missile_*.cpp         # Missile behavior modules │   └── sam_radar.cpp         # Radar lock logic ├── external/ │   └── sentinel-sim-core     # Deterministic tick core (submodule) ├── CMakeLists.txt └── README.md
-
----
-
 ## Build Instructions
 
 ### Requirements
@@ -134,7 +121,6 @@ sentinel-strike/ ├── include/                  # Pure state + simulation h
 - OpenGL (fixed-function pipeline)
 
 ### Build
-```bash
 git clone --recurse-submodules <repo-url>
 cd sentinel-strike
 mkdir build
@@ -167,29 +153,6 @@ If something is unclear, it should be logged, visualized, or made explicit — n
 
 ---
 
-Intended Audience
-
-Sentinel-Strike is suitable for:
-
-Early-career C++ engineers building a systems portfolio
-
-Engineers learning deterministic simulation techniques
-
-Developers interested in replay, rollback, and verification-friendly design
-
-
-It is not intended to be:
-
-A full flight simulator
-
-A physics-accurate military model
-
-A general-purpose game engine
-
-
-
----
-
 Roadmap
 
 Missile energy depletion and terminal guidance limits
@@ -211,3 +174,4 @@ License
 MIT
 
 ---
+
