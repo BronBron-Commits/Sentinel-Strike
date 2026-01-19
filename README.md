@@ -91,8 +91,6 @@ In addition to deterministic playback, Sentinel-Strike includes an **interactive
 - Multiple camera perspectives (chase, side, top, front)
 - Aircraft controls applied as deterministic inputs
 
-This mode exists strictly for **inspection and visualization**, not gameplay.
-
 ---
 
 ## Controls (Interactive Renderer)
@@ -112,61 +110,6 @@ This mode exists strictly for **inspection and visualization**, not gameplay.
 | `↑ ↓` | Rotate camera vertically |
 | `1–5` | Switch camera viewpoints |
 
-## Build Instructions
-
-### Requirements
-- C++20 compiler
-- CMake ≥ 3.16
-- SDL2
-- OpenGL (fixed-function pipeline)
-
-### Build
-git clone --recurse-submodules <repo-url>
-cd sentinel-strike
-mkdir build
-cd build
-cmake ..
-cmake --build . -j
-
-Run
-
-./sentinel-strike-interactive   # interactive visualization
-
-
----
-
-Design Principles
-
-Determinism first — visuals never influence state
-
-Explicit time — no frame-rate coupling
-
-Pure state and logic
-
-Replay- and rollback-friendly architecture
-
-Debug visibility over realism theater
-
-
-If something is unclear, it should be logged, visualized, or made explicit — not guessed.
-
-
----
-
-Roadmap
-
-Missile energy depletion and terminal guidance limits
-
-Multiple aircraft and missiles
-
-ECM / break-lock mechanics
-
-Deterministic network replay
-
-Formal invariant tests for engagement predicates
-
-
-
 ---
 
 License
@@ -174,4 +117,5 @@ License
 MIT
 
 ---
+
 
