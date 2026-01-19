@@ -286,3 +286,37 @@ static void draw_sunset_sky_background()
     glDepthMask(GL_TRUE);
     glPopAttrib();
 }
+
+/* ================= ATMOSPHERIC DUST ================= */
+/* visual-only, no effect on gameplay or camera */
+
+static void draw_atmospheric_dust(
+    float cam_x, float cam_y, float cam_z,
+    float time_sec
+) {
+    glDisable(GL_LIGHTING);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glPointSize(2.0f);
+
+    const int   PARTICLES = 600;
+    const float RANGE     = 1200.0f;
+
+    glBegin(GL_POINTS);
+    for (int i = 0; i < PARTICLES; ++i) {
+        float t = time_sec * 0.15f + i * 0.37f;
+
+        float x = cam_x + sinf(t * 1.3f) * RANGE * 0.6f;
+        float y = cam_y + sinf(t * 0.7f + i) * 120.0f - 40.0f;
+        float z = cam_z + cosf(t * 1.1f) * RANGE * 0.6f;
+
+        float alpha = 0.05f + 0.05f * sinf(t + i);
+        glColor4f(0.9f, 0.85f, 0.7f, alpha);
+        glVertex3f(x, y, z);
+    }
+    glEnd();
+
+    glDisable(GL_BLEND);
+    glEnable(GL_LIGHTING);
+}
