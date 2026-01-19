@@ -163,37 +163,56 @@ void render_strike(const StrikeScenario& scenario) {
 static void draw_f16_primitive()
 {
     /* fuselage */
-    glColor3f(0.7f, 0.7f, 0.75f);
-    glPushMatrix();
-        glScalef(2.5f, 0.6f, 8.0f);
-        glBegin(GL_QUADS); glNormal3f(0,1,0);
-            glNormal3f( 0,  0, -1);
-            glVertex3f(-1, -1, -1); glVertex3f( 1, -1, -1);
-            glVertex3f( 1,  1, -1); glVertex3f(-1,  1, -1);
+    /* fuselage (tapered, Star-Fox style) */
+glColor3f(0.75f, 0.75f, 0.8f);
+glBegin(GL_QUADS);
 
-            glNormal3f( 0,  0,  1);
-            glVertex3f(-1, -1,  1); glVertex3f( 1, -1,  1);
-            glVertex3f( 1,  1,  1); glVertex3f(-1,  1,  1);
+    /* bottom */
+    glNormal3f(0,-1,0);
+    glVertex3f(-0.8f, -0.4f,  4.0f);
+    glVertex3f( 0.8f, -0.4f,  4.0f);
+    glVertex3f( 0.5f, -0.4f, -3.5f);
+    glVertex3f(-0.5f, -0.4f, -3.5f);
 
-            glNormal3f(-1,  0,  0);
-            glVertex3f(-1, -1, -1); glVertex3f(-1, -1,  1);
-            glVertex3f(-1,  1,  1); glVertex3f(-1,  1, -1);
+    /* top */
+    glNormal3f(0,1,0);
+    glVertex3f(-0.6f,  0.6f,  4.0f);
+    glVertex3f( 0.6f,  0.6f,  4.0f);
+    glVertex3f( 0.3f,  0.9f, -3.5f);
+    glVertex3f(-0.3f,  0.9f, -3.5f);
 
-            glNormal3f( 1,  0,  0);
-            glVertex3f( 1, -1, -1); glVertex3f( 1, -1,  1);
-            glVertex3f( 1,  1,  1); glVertex3f( 1,  1, -1);
+    /* left */
+    glNormal3f(-1,0,0);
+    glVertex3f(-0.8f, -0.4f,  4.0f);
+    glVertex3f(-0.6f,  0.6f,  4.0f);
+    glVertex3f(-0.3f,  0.9f, -3.5f);
+    glVertex3f(-0.5f, -0.4f, -3.5f);
 
-            glNormal3f( 0,  1,  0);
-            glVertex3f(-1,  1, -1); glVertex3f( 1,  1, -1);
-            glVertex3f( 1,  1,  1); glVertex3f(-1,  1,  1);
+    /* right */
+    glNormal3f(1,0,0);
+    glVertex3f( 0.8f, -0.4f,  4.0f);
+    glVertex3f( 0.6f,  0.6f,  4.0f);
+    glVertex3f( 0.3f,  0.9f, -3.5f);
+    glVertex3f( 0.5f, -0.4f, -3.5f);
 
-            glNormal3f( 0, -1,  0);
-            glVertex3f(-1, -1, -1); glVertex3f( 1, -1, -1);
-            glVertex3f( 1, -1,  1); glVertex3f(-1, -1,  1);
-        glEnd();
-    glPopMatrix();
+    /* rear */
+    glNormal3f(0,0,-1);
+    glVertex3f(-0.5f, -0.4f, -3.5f);
+    glVertex3f( 0.5f, -0.4f, -3.5f);
+    glVertex3f( 0.3f,  0.9f, -3.5f);
+    glVertex3f(-0.3f,  0.9f, -3.5f);
 
-    glPopMatrix();
+glEnd();
+
+/* nose cone */
+glColor3f(0.9f, 0.9f, 0.95f);
+glBegin(GL_TRIANGLES);
+    glNormal3f(0,0,1);
+    glVertex3f( 0.0f, 0.2f,  6.0f);
+    glVertex3f(-0.6f, 0.0f,  4.0f);
+    glVertex3f( 0.6f, 0.0f,  4.0f);
+glEnd();
+
 
     /* wings */
     glColor3f(0.5f, 0.5f, 0.55f);
