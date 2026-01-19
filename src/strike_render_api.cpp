@@ -29,22 +29,29 @@ static void draw_ground(float size) {
         for (float z = -size; z < size; z += step) {
             float n = ground_noise(x, z);
 
+            /* gentle rolling terrain */
+            float h00 = sinf(x * 0.010f) * 8.0f + cosf(z * 0.012f) * 6.0f;
+            float h10 = sinf((x+step) * 0.010f) * 8.0f + cosf(z * 0.012f) * 6.0f;
+            float h11 = sinf((x+step) * 0.010f) * 8.0f + cosf((z+step) * 0.012f) * 6.0f;
+            float h01 = sinf(x * 0.010f) * 8.0f + cosf((z+step) * 0.012f) * 6.0f;
+
             float g = 0.45f + n * 0.15f;
             float r = 0.18f + n * 0.05f;
             float b = 0.12f + n * 0.03f;
 
             glColor3f(r, g, b);
             glBegin(GL_QUADS);
-                glVertex3f(x,       0.0f, z);
-                glVertex3f(x+step,  0.0f, z);
-                glVertex3f(x+step,  0.0f, z+step);
-                glVertex3f(x,       0.0f, z+step);
+                glVertex3f(x,        h00, z);
+                glVertex3f(x+step,   h10, z);
+                glVertex3f(x+step,   h11, z+step);
+                glVertex3f(x,        h01, z+step);
             glEnd();
         }
     }
 
     glEnable(GL_LIGHTING);
 }
+
 
 
 
@@ -144,7 +151,7 @@ void render_strike(const StrikeScenario& scenario) {
     draw_ground(5000.0f);
     draw_grid(200, 10.0f);
 
-    glTranslatef(f16_x, f16_y, f16_z);
+    glTranslatef(f16_x, f16_y + sinf(f16_x * 0.010f) * 8.0f + cosf(f16_z * 0.012f) * 6.0f + 4.0f, f16_z);
     glRotatef(-90.0f, 0, 1, 0); /* model forward axis correction */
     glRotatef(scenario.f16.yaw * 57.2958f, 0, 1, 0);
     glRotatef(scenario.f16.pitch * 57.2958f, 1, 0, 0);
