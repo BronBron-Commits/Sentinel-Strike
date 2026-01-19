@@ -1,3 +1,4 @@
+static void draw_sunset_sky_background();
 static void draw_grid(int half, float step);
 #include "strike_render_api.hpp"
 #include "strike_scenario.hpp"
@@ -88,6 +89,8 @@ void render_strike(const StrikeScenario& scenario) {
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    draw_sunset_sky_background();
+
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -185,3 +188,53 @@ static void draw_f16_primitive()
 
 }
 
+
+/* ----------------- sunset sky background ----------------- */
+/* fully isolated: no effect on world rendering */
+
+static void draw_sunset_sky_background()
+{
+    /* save state */
+    glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    /* save matrices */
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glBegin(GL_QUADS);
+
+        /* top sky */
+        glColor3f(0.10f, 0.18f, 0.35f);
+        glVertex2f(-1.0f,  1.0f);
+        glVertex2f( 1.0f,  1.0f);
+
+        /* horizon */
+        glColor3f(1.00f, 0.45f, 0.15f);
+        glVertex2f( 1.0f, -0.2f);
+        glVertex2f(-1.0f, -0.2f);
+
+        /* lower fade */
+        glColor3f(0.25f, 0.10f, 0.05f);
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f( 1.0f, -1.0f);
+
+    glEnd();
+
+    /* restore matrices */
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+
+    /* restore state */
+    glDepthMask(GL_TRUE);
+    glPopAttrib();
+}
