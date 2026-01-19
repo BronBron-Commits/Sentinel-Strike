@@ -100,6 +100,9 @@ void render_strike(const StrikeScenario& scenario) {
     const float fx = cosf(pitch) * cosf(yaw);
     const float fy = sinf(pitch);
     const float fz = cosf(pitch) * sinf(yaw);
+    /* camera forward vector (yaw-only) */
+    const float fx_cam = cosf(camera_yaw);
+    const float fz_cam = sinf(camera_yaw);
 
     const float cam_dist   = 40.0f;
     const float cam_height = 35.0f;
@@ -135,11 +138,11 @@ void render_strike(const StrikeScenario& scenario) {
     /* camera rotation (view-space) */
     glRotatef(-camera_yaw * 57.2958f, 0.0f, 1.0f, 0.0f);
 
-    const float cx = f16_x - fx * cam_dist;
-    const float cz = f16_z - fz * cam_dist;
+    const float cx = f16_x - fx_cam * cam_dist;
+    const float cz = f16_z - fz_cam * cam_dist;
 
-    const float lx = f16_x + fx * 10.0f;
-    const float lz = f16_z + fz * 10.0f;
+    const float lx = f16_x + fx_cam * 10.0f;
+    const float lz = f16_z + fz_cam * 10.0f;
 
     gluLookAt(
         cx, cam_height, cz,
