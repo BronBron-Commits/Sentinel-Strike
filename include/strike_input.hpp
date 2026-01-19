@@ -2,12 +2,15 @@
 #include <cstdint>
 
 enum class ControlAction : uint8_t {
+    /* aircraft attitude */
     F16_PitchUp,
     F16_PitchDown,
-    F16_YawLeft,
-    F16_YawRight,
     F16_RollLeft,
-    F16_RollRight
+    F16_RollRight,
+
+    /* engine throttle */
+    ThrottleUp,
+    ThrottleDown
 };
 
 struct ControlInput {

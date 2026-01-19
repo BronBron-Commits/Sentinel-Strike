@@ -1,25 +1,41 @@
-#include "strike_input.hpp"
 #include "strike_scenario.hpp"
+#include "strike_input.hpp"
 
-void apply_control_input(StrikeScenario& s, const ControlInput& in) {
+#include <algorithm> // std::min, std::max
+
+void apply_control_input(StrikeScenario& scenario, const ControlInput& in)
+{
+    auto& f16 = scenario.f16;
+
     switch (in.action) {
+
+        /* ----- THROTTLE ----- */
+        case ControlAction::ThrottleUp:
+            f16.throttle = std::min(1.0f, f16.throttle + in.value);
+            break;
+
+        case ControlAction::ThrottleDown:
+            f16.throttle = std::max(0.0f, f16.throttle - in.value);
+            break;
+
+        /* ----- ATTITUDE ----- */
         case ControlAction::F16_PitchUp:
-            s.f16.pitch += in.value;
+            f16.pitch += in.value;
             break;
+
         case ControlAction::F16_PitchDown:
-            s.f16.pitch -= in.value;
+            f16.pitch -= in.value;
             break;
-        case ControlAction::F16_YawLeft:
-            s.f16.yaw -= in.value;
-            break;
-        case ControlAction::F16_YawRight:
-            s.f16.yaw += in.value;
-            break;
+
         case ControlAction::F16_RollLeft:
-            s.f16.roll -= in.value;
+            f16.roll += in.value;
             break;
+
         case ControlAction::F16_RollRight:
-            s.f16.roll += in.value;
+            f16.roll -= in.value;
+            break;
+
+        default:
             break;
     }
 }

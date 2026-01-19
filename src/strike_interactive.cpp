@@ -37,21 +37,34 @@ int main() {
             }
 
             if (e.type == SDL_KEYDOWN) {
-                const float cam_step = 0.04f;
+                in.tick  = tick;
+                in.value = 0.02f;
 
-                /* camera-only controls */
+                /* camera controls (unchanged) */
+                const float cam_step = 0.04f;
                 switch (e.key.keysym.sym) {
                     case SDLK_LEFT:  camera_yaw   += cam_step; break;
                     case SDLK_RIGHT: camera_yaw   -= cam_step; break;
                     case SDLK_UP:    camera_pitch += cam_step; break;
                     case SDLK_DOWN:  camera_pitch -= cam_step; break;
-                    default: break;
                 }
 
-                /* aircraft controls */
-                in.tick  = tick;
-                in.value = 0.02f;
+                /* throttle (NEW) */
+                switch (e.key.keysym.sym) {
+                    case SDLK_LSHIFT:
+                    case SDLK_RSHIFT:
+                        in.action = ControlAction::ThrottleUp;
+                        apply_control_input(scenario, in);
+                        continue;
 
+                    case SDLK_LCTRL:
+                    case SDLK_RCTRL:
+                        in.action = ControlAction::ThrottleDown;
+                        apply_control_input(scenario, in);
+                        continue;
+                }
+
+                /* aircraft controls (UNCHANGED WASD) */
                 switch (e.key.keysym.sym) {
                     case SDLK_w: in.action = ControlAction::F16_PitchUp;    break;
                     case SDLK_s: in.action = ControlAction::F16_PitchDown;  break;
