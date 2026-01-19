@@ -3,6 +3,7 @@
 
 #include "strike_scenario.hpp"
 #include "strike_input.hpp"
+#include "strike_render_api.hpp"
 
 extern void apply_control_input(StrikeScenario&, const ControlInput&);
 extern void render_strike(const StrikeScenario&);
@@ -24,26 +25,38 @@ int main() {
     scenario.init();
 
     uint32_t tick = 0;
+    ControlInput in;
     bool running = true;
 
     while (running) {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT)
+            if (e.type == SDL_QUIT) {
                 running = false;
+                break;
+            }
 
             if (e.type == SDL_KEYDOWN) {
-                ControlInput in{};
+                const float cam_step = 0.04f;
+
+                /* camera-only controls */
+                switch (e.key.keysym.sym) {
+                    case SDLK_LEFT:  camera_yaw   += cam_step; break;
+                    case SDLK_RIGHT: camera_yaw   -= cam_step; break;
+                    case SDLK_UP:    camera_pitch += cam_step; break;
+                    case SDLK_DOWN:  camera_pitch -= cam_step; break;
+                    default: break;
+                }
+
+                /* aircraft controls */
                 in.tick  = tick;
                 in.value = 0.02f;
 
                 switch (e.key.keysym.sym) {
                     case SDLK_w: in.action = ControlAction::F16_PitchUp;    break;
                     case SDLK_s: in.action = ControlAction::F16_PitchDown;  break;
-                    case SDLK_LEFT:  in.action = ControlAction::F16_YawLeft;  break;
-                    case SDLK_RIGHT: in.action = ControlAction::F16_YawRight; break;
-                    case SDLK_a: in.action = ControlAction::F16_RollLeft;  break;
-                    case SDLK_d: in.action = ControlAction::F16_RollRight; break;
+                    case SDLK_a: in.action = ControlAction::F16_RollLeft;   break;
+                    case SDLK_d: in.action = ControlAction::F16_RollRight;  break;
                     default: continue;
                 }
 
@@ -54,7 +67,6 @@ int main() {
         scenario.step();
         render_strike(scenario);
         SDL_GL_SwapWindow(win);
-
         SDL_Delay(16);
         tick++;
     }
