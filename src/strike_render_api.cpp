@@ -134,6 +134,7 @@ void render_strike(const StrikeScenario& scenario) {
     /* camera rotation (view-space) */
     glRotatef(-camera_pitch * 57.2958f, 1.0f, 0.0f, 0.0f);
 
+    glRotatef(+scenario.f16.roll * 57.2958f, 0.0f, 0.0f, 1.0f);
 
     /* camera rotation (view-space) */
     glRotatef(-camera_yaw * 57.2958f, 0.0f, 1.0f, 0.0f);
